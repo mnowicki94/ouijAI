@@ -1,11 +1,16 @@
 import flet as ft
 from dotenv import load_dotenv
 import os
+import openai
+
+from chatbot import chatgpt
 
 load_dotenv()  # take environment variables from .env.
 
 # Code of your application, which uses environment variables (e.g. from `os.environ` or
 # `os.getenv`) as if they came from the actual environment.
+
+openai.api_key = os.getenv("OPENAI_APIKEY")
 
 class Message():
     def __init__(self, user_name: str, text: str, message_type: str):
@@ -61,6 +66,9 @@ def main(page: ft.Page):
     # def route_change(e: ft.RouteChangeEvent):
     #     page.add(ft.Text(f"New route: {e.route}"))
 
+    # creating the object of chatgpt class
+    # chat_gpt = chatgpt(user_name)
+
     def go_chat(e):
         print('elko', join_user_name.value)
         if not join_user_name.value:
@@ -90,88 +98,26 @@ def main(page: ft.Page):
             spacing=10,
             auto_scroll=True,
         )
-
-        def chatgpt_old(message):
-            import openai
-
-            # Set up the OpenAI API client
-            openai.api_key = os.getenv("OPENAI_APIKEY")
-
-            # Set up the model and prompt
-            model_engine = "text-davinci-003"
-            prompt = message
-            # Generate a response
-            completion = openai.Completion.create(
-                engine=model_engine,
-                prompt=prompt,
-                max_tokens=1024,
-                n=1,
-                stop=None,
-                temperature=0.5,
-            )
-
-            response = completion.choices[0].text.strip()
-            if response.startswith('\n'):
-                response = response[1:]
-            return response
-
-        def chatgpt(message):
-
-            # import openai
-            from langchain.llms import OpenAI
-            from langchain.chat_models import ChatOpenAI
-            from langchain import PromptTemplate
-            from langchain.chains import LLMChain
-            from langchain.prompts.chat import (
-                ChatPromptTemplate,
-                SystemMessagePromptTemplate,
-                HumanMessagePromptTemplate,
-            )
-
-            # Set up the OpenAI API client
-            openai_api_key = os.getenv("OPENAI_APIKEY")
-
-            chat = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.2)
-
-            # Template to use for the system message prompt
-            template = f"""
-                You are a scary ghost and you want to scare people. You are talking to {join_user_name.value}. 
-                Ask him/her different creepy questions. If they answer only with yes or no ask them for more information to keep
-                conversion going. Do not repeat same question all over agagin.
-                """
-
-            system_message_prompt = SystemMessagePromptTemplate.from_template(template)
-
-            # Human question prompt
-            human_template = "Answer to that message based on whole conversation: {message}"
-            human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-
-
-            chat_prompt = ChatPromptTemplate.from_messages(
-                [system_message_prompt, message]
-            )
-
-            chain = LLMChain(llm=chat, prompt=chat_prompt)
-
-            response = chain.run(question=message)
-            response = response.replace("\n", "")
-            return response
-
+        print(join_user_name.value)
+        chat_gpt = chatgpt(user = join_user_name.value)
         def send_message_click(e):
             print('ALERtTT', new_message.value)
             if new_message.value != "":
+
                 page.pubsub.send_all(Message(page.session.get(
                     "user_name"), new_message.value, message_type="chat_message"))
                 temp = new_message.value
-                new_message.value = ""
-                new_message.focus()
-                res = chatgpt(temp)
+
+                res = chat_gpt.ChatGptResponse(temp)
                 print('ALERtTT-res', res)
                 if len(res) > 220:  # adjust the maximum length as needed
                     res = '\n'.join([res[i:i+220]
                                     for i in range(0, len(res), 220)])
                 page.pubsub.send_all(
                     Message("ChatGPT", res, message_type="chat_message"))
+
+                new_message.value = ""
+                new_message.focus()
                 page.update()
 
         # A new message entry form
@@ -218,6 +164,7 @@ def main(page: ft.Page):
         join_user_name
         # ft.ElevatedButton("Submit", on_click=go_chat)
     )
+
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
