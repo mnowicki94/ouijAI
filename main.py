@@ -71,7 +71,7 @@ def main(page: ft.Page):
     # chat_gpt = chatgpt(user_name)
 
     audio1 = ft.Audio(
-        src="ambient_c_motion.mp3", autoplay=True)
+        src="https://luan.xyz/files/audio/ambient_c_motion.mp3", autoplay=True)
     page.overlay.append(audio1)
     page.add(
         # ft.Text("This is an app with background audio."),
