@@ -179,6 +179,6 @@ def main(page: ft.Page):
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-ft.app(target=main, view=ft.AppView.WEB_BROWSER,  port=8080)
+# ft.app(target=main, view=ft.AppView.WEB_BROWSER,  port=8080)
 
-# ft.app(target=main)
+ft.app(target=main)

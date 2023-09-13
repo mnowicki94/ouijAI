@@ -1,7 +1,3 @@
-#ENV OPENAI_APIKEY=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
-#NOT WORKING FOR SOME REASON
-
-
 # Set base image (host OS)
 FROM python:3.8-alpine
 
