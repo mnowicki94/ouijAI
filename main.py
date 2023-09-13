@@ -70,6 +70,14 @@ def main(page: ft.Page):
     # creating the object of chatgpt class
     # chat_gpt = chatgpt(user_name)
 
+    audio1 = ft.Audio(
+        src="ambient_c_motion.mp3", autoplay=True)
+    page.overlay.append(audio1)
+    page.add(
+        # ft.Text("This is an app with background audio."),
+        # ft.ElevatedButton("Stop playing", on_click=lambda _: audio1.pause()),
+    )
+
     def go_chat(e):
         print('elko', join_user_name.value)
         if not join_user_name.value:
@@ -171,5 +179,6 @@ def main(page: ft.Page):
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-# ft.app(target=main, view=ft.AppView.WEB_BROWSER)
-ft.app(target=main)
+ft.app(target=main, view=ft.AppView.WEB_BROWSER,  port=8080)
+
+# ft.app(target=main)
