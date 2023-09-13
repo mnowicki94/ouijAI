@@ -4,6 +4,7 @@ import os
 import openai
 
 from chatbot import chatgpt
+from features import txt2speech
 
 load_dotenv()  # take environment variables from .env.
 
@@ -107,7 +108,8 @@ def main(page: ft.Page):
                 page.pubsub.send_all(Message(page.session.get(
                     "user_name"), new_message.value, message_type="chat_message"))
                 temp = new_message.value
-
+                new_message.value = ""
+                new_message.focus()
                 res = chat_gpt.ChatGptResponse(temp)
                 print('ALERtTT-res', res)
                 if len(res) > 220:  # adjust the maximum length as needed
@@ -116,8 +118,8 @@ def main(page: ft.Page):
                 page.pubsub.send_all(
                     Message("ChatGPT", res, message_type="chat_message"))
 
-                new_message.value = ""
-                new_message.focus()
+                #READ ANSWER
+                txt2speech(res)
                 page.update()
 
         # A new message entry form
