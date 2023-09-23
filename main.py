@@ -4,7 +4,7 @@ import os
 import openai
 
 from chatbot import chatgpt
-from features import txt2speech
+from features import txt2speech, generate_face
 
 load_dotenv()  # take environment variables from .env.
 
@@ -72,11 +72,9 @@ def main(page: ft.Page):
 
     audio1 = ft.Audio(
         src="https://luan.xyz/files/audio/ambient_c_motion.mp3", autoplay=True)
+
     page.overlay.append(audio1)
-    page.add(
-        # ft.Text("This is an app with background audio."),
-        # ft.ElevatedButton("Stop playing", on_click=lambda _: audio1.pause()),
-    )
+
 
     def go_chat(e):
         print('elko', join_user_name.value)
@@ -109,6 +107,55 @@ def main(page: ft.Page):
         )
         print(join_user_name.value)
         chat_gpt = chatgpt(user = join_user_name.value)
+
+
+        #LOADING SCREEN
+
+        # these two lines will align the text center in the app
+        page.vertical_alignment = ft.MainAxisAlignment.CENTER
+        page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+        page.add(
+            ft.Image(
+                src='https://repository-images.githubusercontent.com/303198261/870a5000-0c02-11eb-9696-8f44cdbf0892',
+                fit=ft.ImageFit.COVER,
+                expand=True,
+            )
+        )
+
+
+        page.add(ft.Text("Searching for ghosts...",
+                 size=32,  # Increasing the size of the text
+                 weight=ft.FontWeight.BOLD  # it will bold the text
+                 ))
+
+        page.splash = ft.ProgressBar()
+
+
+        page.update()
+
+
+        # GENERATE FACE
+        img_path = generate_face()
+
+        img = ft.Image(
+            src_base64=img_path,
+            width=500,
+            height=500,
+            fit=ft.ImageFit.CONTAIN,
+        )
+
+        page.splash = None
+
+        #ugly solution to improve in future
+        del page.controls[1], page.controls[0]
+
+        page.update()
+
+
+        page.add(img)
+        page.update()
+
         def send_message_click(e):
             print('ALERtTT', new_message.value)
             if new_message.value != "":
@@ -119,6 +166,7 @@ def main(page: ft.Page):
                 new_message.value = ""
                 new_message.focus()
                 res = chat_gpt.ChatGptResponse(temp)
+                xres = res
                 print('ALERtTT-res', res)
                 if len(res) > 220:  # adjust the maximum length as needed
                     res = '\n'.join([res[i:i+220]
@@ -127,7 +175,9 @@ def main(page: ft.Page):
                     Message("ChatGPT", res, message_type="chat_message"))
 
                 #READ ANSWER
-                txt2speech(res)
+                txt2speech(xres)
+
+
                 page.update()
 
         # A new message entry form
