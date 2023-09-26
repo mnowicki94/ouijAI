@@ -2,3 +2,5 @@ flet
 openai
 pyttsx3
 python-dotenv
+langdetect
+deep_translator

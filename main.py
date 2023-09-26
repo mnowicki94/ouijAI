@@ -71,9 +71,16 @@ def main(page: ft.Page):
     audio1 = ft.Audio(
         # src="https://luan.xyz/files/audio/ambient_c_motion.mp3",
         src='./content/ambient_c_motion.mp3',
-        autoplay=True)
+        autoplay=False)
 
     page.overlay.append(audio1)
+    page.add(
+        ft.Text("This is an app with background audio."),
+        ft.ElevatedButton("Stop playing", on_click=lambda _: audio1.pause()),
+    )
+    page.add(
+        ft.ElevatedButton("Start playing", on_click=lambda _: audio1.play()),
+    )
 
 
     def go_chat(e):
@@ -118,7 +125,7 @@ def main(page: ft.Page):
         page.add(
             ft.Image(
                 src='./content/ouija2.jpeg',
-                # src="./content/ouija.gif",
+                # src="/content/ouija.gif",
                 fit=ft.ImageFit.COVER,
                 expand=True,
             )
@@ -137,7 +144,7 @@ def main(page: ft.Page):
 
 
         # GENERATE FACE
-        img_path = generate_face()
+        img_path = generate_face(scare = join_user_scare.value)
         # img_path = local_image()
 
         img = ft.Image(
@@ -169,9 +176,9 @@ def main(page: ft.Page):
                 new_message.focus()
                 res = chat_gpt.ChatGptResponse(temp, id=chat_id)
                 xres = res
-               
+
                 # Wrap this text.
-                wrapper = textwrap.TextWrapper(width=50) 
+                wrapper = textwrap.TextWrapper(width=50)
                 string = wrapper.fill(text=res)
                 # if len(res) > 220:  # adjust the maximum length as needed
                 #     res = '\n'.join([res[i:i+220]

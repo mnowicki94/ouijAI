@@ -2,7 +2,7 @@ import pyttsx3 as tts
 import base64
 import requests
 import os
-import speech_recognition as sr
+# import speech_recognition as sr
 
 def txt2speech(mytext):
     engine = tts.init()
@@ -15,9 +15,19 @@ def txt2speech(mytext):
     engine.stop()
 
 
-def generate_face():
+def generate_face(scare):
 
     stabilityai_key = os.getenv("STABILITYAI_APIKEY")
+
+    from langdetect import detect
+    lang = detect(scare)
+
+    if lang == 'pl':
+
+        print('Prompt po polsku, tłumaczę')
+
+        from deep_translator import GoogleTranslator
+        scare = GoogleTranslator(source='auto', target='en').translate(scare)
 
 
     url = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
@@ -30,10 +40,16 @@ def generate_face():
       "cfg_scale": 5,
       "samples": 1,
       "text_prompts": [
+        # {
+        #   "text": "face of scary, creepy unnatural person",
+        #   #   "text": "scary creature",
+        #
+        #     "weight": 1
+        # },
         {
-          "text": "face of scary, creepy unnatural person",
-          "weight": 1
-        },
+            "text": "terrifying "+str(scare),
+            "weight": 1
+         },
 
         {
           "text": "blurry, bad, anime",
@@ -60,8 +76,8 @@ def generate_face():
     data = response.json()
 
     # make sure the out directory exists
-    if not os.path.exists("./out"):
-        os.makedirs("./out")
+    # if not os.path.exists("./out"):
+    #     os.makedirs("./out")
 
 
     return data["artifacts"][0]['base64']
