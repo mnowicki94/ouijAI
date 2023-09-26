@@ -3,16 +3,12 @@ from dotenv import load_dotenv
 import os
 import openai
 import textwrap
-  
-
+import random
 
 from chatbot import chatgpt
 from features import txt2speech, generate_face, local_image
 
 load_dotenv()  # take environment variables from .env.
-
-# Code of your application, which uses environment variables (e.g. from `os.environ` or
-# `os.getenv`) as if they came from the actual environment.
 
 openai.api_key = os.getenv("OPENAI_APIKEY")
 
@@ -21,6 +17,7 @@ class Message():
         self.user_name = user_name
         self.text = text
         self.message_type = message_type
+
 
 
 class ChatMessage(ft.Row):
@@ -67,14 +64,14 @@ class ChatMessage(ft.Row):
 
 def main(page: ft.Page):
 
-    # def route_change(e: ft.RouteChangeEvent):
-    #     page.add(ft.Text(f"New route: {e.route}"))
 
-    # creating the object of chatgpt class
-    # chat_gpt = chatgpt(user_name)
+    chat_id = int(random.random() * 10000000000000000)
+
 
     audio1 = ft.Audio(
-        src="https://luan.xyz/files/audio/ambient_c_motion.mp3", autoplay=True)
+        # src="https://luan.xyz/files/audio/ambient_c_motion.mp3",
+        src='./content/ambient_c_motion.mp3',
+        autoplay=True)
 
     page.overlay.append(audio1)
 
@@ -109,7 +106,7 @@ def main(page: ft.Page):
             auto_scroll=True,
         )
         print(join_user_name.value)
-        chat_gpt = chatgpt(user = join_user_name.value)
+        chat_gpt = chatgpt(user = join_user_name.value, age = join_user_age.value, desc = join_user_desc.value, scare = join_user_scare.value)
 
 
         #LOADING SCREEN
@@ -120,7 +117,8 @@ def main(page: ft.Page):
 
         page.add(
             ft.Image(
-                src='https://repository-images.githubusercontent.com/303198261/870a5000-0c02-11eb-9696-8f44cdbf0892',
+                src='./content/ouija2.jpeg',
+                # src="./content/ouija.gif",
                 fit=ft.ImageFit.COVER,
                 expand=True,
             )
@@ -169,7 +167,7 @@ def main(page: ft.Page):
                 temp = new_message.value
                 new_message.value = ""
                 new_message.focus()
-                res = chat_gpt.ChatGptResponse(temp)
+                res = chat_gpt.ChatGptResponse(temp, id=chat_id)
                 xres = res
                
                 # Wrap this text.
@@ -227,8 +225,27 @@ def main(page: ft.Page):
         label="Enter your name to join the chat",
         autofocus=True,
         on_submit=go_chat)
+
+    join_user_age = ft.TextField(
+        label="Enter your Age",
+        autofocus=True,
+        on_submit=go_chat)
+
+    join_user_desc = ft.TextField(
+        label="Write something about yourself",
+        autofocus=True,
+        on_submit=go_chat)
+
+    join_user_scare = ft.TextField(
+        label="Write what are you afraid of",
+        autofocus=True,
+        on_submit=go_chat)
+
     page.add(
-        join_user_name
+        join_user_name,
+        join_user_age,
+        join_user_desc,
+        join_user_scare,
         # ft.ElevatedButton("Submit", on_click=go_chat)
     )
 

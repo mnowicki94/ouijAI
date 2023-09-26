@@ -17,7 +17,7 @@ RUN pip install -r requirements.txt
 COPY main.py .
 COPY chatbot.py .
 COPY features.py .
-COPY ambient_c_motion.mp3 .
+COPY content/ambient_c_motion.mp3 .
 
 
 #COPY .env .

@@ -2,7 +2,7 @@ import pyttsx3 as tts
 import base64
 import requests
 import os
-# import speech_recognition as sr
+import speech_recognition as sr
 
 def txt2speech(mytext):
     engine = tts.init()
@@ -86,7 +86,6 @@ def generate_face():
 #         return None
 #     return query
 
-# spch2txt()
 
 
 def local_image():
@@ -99,3 +98,4 @@ def local_image():
         base64_string = base64_bytes.decode()
         print(base64_string)
     return base64_string
+
