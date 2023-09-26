@@ -87,3 +87,15 @@ def generate_face():
 #     return query
 
 # spch2txt()
+
+
+def local_image():
+    import base64
+
+    with open('./assets/face1.jpg', 'rb') as image_file:
+        base64_bytes = base64.b64encode(image_file.read())
+        print(base64_bytes)
+
+        base64_string = base64_bytes.decode()
+        print(base64_string)
+    return base64_string

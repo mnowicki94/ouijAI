@@ -2,9 +2,12 @@ import flet as ft
 from dotenv import load_dotenv
 import os
 import openai
+import textwrap
+  
+
 
 from chatbot import chatgpt
-from features import txt2speech, generate_face
+from features import txt2speech, generate_face, local_image
 
 load_dotenv()  # take environment variables from .env.
 
@@ -137,6 +140,7 @@ def main(page: ft.Page):
 
         # GENERATE FACE
         img_path = generate_face()
+        # img_path = local_image()
 
         img = ft.Image(
             src_base64=img_path,
@@ -167,12 +171,15 @@ def main(page: ft.Page):
                 new_message.focus()
                 res = chat_gpt.ChatGptResponse(temp)
                 xres = res
-                print('ALERtTT-res', res)
-                if len(res) > 220:  # adjust the maximum length as needed
-                    res = '\n'.join([res[i:i+220]
-                                    for i in range(0, len(res), 220)])
+               
+                # Wrap this text.
+                wrapper = textwrap.TextWrapper(width=50) 
+                string = wrapper.fill(text=res)
+                # if len(res) > 220:  # adjust the maximum length as needed
+                #     res = '\n'.join([res[i:i+220]
+                #                     for i in range(0, len(res), 220)])
                 page.pubsub.send_all(
-                    Message("ChatGPT", res, message_type="chat_message"))
+                    Message("Negative 00 Ghost 27", string, message_type="chat_message"))
 
                 #READ ANSWER
                 txt2speech(xres)
